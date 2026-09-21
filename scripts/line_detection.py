@@ -53,7 +53,7 @@ def find_highest_snr_line(ch,min_nchan,max_nchan,f,flux,sn,eflux):
 
 
 
-def line_detect(path,src,file,vel_width_low=200,vel_width_high=500,snr_other_lines=False,line_info_file='',guess_redshift=0,break_set=5):
+def line_detect(path,src,file,vel_width_low=200,vel_width_high=500,snr_other_lines=False,line_info_file='',guess_redshift=0,break_set=0.3):
     #################################################
     ### need to write a line candidates csv file  ###
     ### the col_names: line_name, rest_freq       ###
@@ -100,7 +100,7 @@ def line_detect(path,src,file,vel_width_low=200,vel_width_high=500,snr_other_lin
         sn[:]=-1000
 
         num = 1
-        freq, flux, eflux = tmp_sub.values.T    
+        freq, flux, eflux = tmp_sub.values.T.copy()    
         vel = np.array([(np.median(freq)-freq[i])/np.median(freq)*299792.458 for i in range(len(freq))])
         velwidth = (np.diff(freq) / np.median(freq)) * 299792.458
         velwidth_med = np.nanmedian(velwidth)

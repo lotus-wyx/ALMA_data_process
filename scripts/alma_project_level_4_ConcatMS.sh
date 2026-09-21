@@ -28,7 +28,7 @@ if [ ! -d "Each_target_img" ]; then
 fi
 
 # CASA 路径 - 根据您的系统配置修改
-CASA_CMD="/home/wyx/Software/CASA/Portable/casa-6.2.1-7-pipeline-2021.2.0.128/bin/casa" # "casa" 
+CASA_CMD="$HOME/Software/CASA/Portable/casa-6.6.1-17-pipeline-2024.1.0.8/bin/casa" # "casa" 
 echo "=================================================="
 echo "ALMA Project Level 4: Concat MS files"
 echo "=================================================="

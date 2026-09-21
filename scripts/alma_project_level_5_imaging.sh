@@ -2,7 +2,9 @@
 
 # 脚本名称：alma_project_level_5_imaging.sh
 # 功能：在当前目录下通过 CASA 执行 alma_project_level_5_imaging.py
-# 可在py文件中修改imsize
+# 用法示例：
+#   ./alma_project_level_5_imaging.sh --channel-width-kms 20 --mask
+#   ./alma_project_level_5_imaging.sh --channel-width-kms 25 --no-mask
 
 # 获取脚本所在目录（Python 脚本的位置）
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -31,18 +33,19 @@ fi
 # CASA 路径 - 根据您的系统配置修改
 # 方法1: 如果 casa 在 PATH 中
 # MPI并行版本
-MPICASA="/home/wyx/Software/CASA/Portable/casa-6.2.1-7-pipeline-2021.2.0.128/bin/mpicasa"
+MPICASA="$HOME/Software/CASA/Portable/casa-6.6.1-17-pipeline-2024.1.0.8/bin/mpicasa"
 NPROC=16  # MPI进程数
-CASA_CMD="casa"
+# CASA_CMD="casa"
 
 # 方法2: 如果需要指定完整路径，取消下面的注释并修改路径
-# CASA_CMD="/home/wyx/Software/CASA/Portable/casa-6.x.x/bin/casa"
+CASA_CMD="$HOME/Software/CASA/Portable/casa-6.6.1-17-pipeline-2024.1.0.8/bin/casa"
 
 echo "=================================================="
 echo "ALMA Project Level 5: Imaging with tclean"
 echo "=================================================="
 echo "工作目录: ${WORK_DIR}"
 echo "Python 脚本: ${PYTHON_SCRIPT}"
+echo "Level 5 参数: $*"
 echo "=================================================="
 echo ""
 
@@ -56,7 +59,7 @@ echo "日志将保存到: ${LOG_FILE}"
 echo ""
 
 # 执行 CASA 并运行 Python 脚本，同时输出到终端和日志文件
-stdbuf -oL ${MPICASA} -n ${NPROC} ${CASA_CMD} --nologger --nogui --nologfile -c "${PYTHON_SCRIPT}" 2>&1 | tee "${LOG_FILE}"
+stdbuf -oL "${MPICASA}" -n "${NPROC}" "${CASA_CMD}" --nologger --nogui --nologfile -c "${PYTHON_SCRIPT}" "$@" 2>&1 | tee "${LOG_FILE}"
 
 # 检查执行结果
 if [ ${PIPESTATUS[0]} -eq 0 ]; then

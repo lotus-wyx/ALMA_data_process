@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# 脚本名称：alma_project_level_5_imaging.sh
+# 脚本名称：alma_project_level_5_imaging.single_core.sh
 # 功能：在当前目录下通过 CASA 执行 alma_project_level_5_imaging.py
+# 用法示例：
+#   ./alma_project_level_5_imaging.single_core.sh --channel-width-kms 20 --mask
+#   ./alma_project_level_5_imaging.single_core.sh --channel-width-kms 25 --no-mask
 
 # 获取脚本所在目录（Python 脚本的位置）
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -32,13 +35,14 @@ fi
 CASA_CMD="casa"
 
 # 方法2: 如果需要指定完整路径，取消下面的注释并修改路径
-# CASA_CMD="/home/wyx/Software/CASA/Portable/casa-6.x.x/bin/casa"
+# CASA_CMD="$HOME/Software/CASA/Portable/casa-6.x.x/bin/casa"
 
 echo "=================================================="
 echo "ALMA Project Level 5: Imaging with tclean"
 echo "=================================================="
 echo "工作目录: ${WORK_DIR}"
 echo "Python 脚本: ${PYTHON_SCRIPT}"
+echo "Level 5 参数: $*"
 echo "=================================================="
 echo ""
 
@@ -52,7 +56,7 @@ echo "日志将保存到: ${LOG_FILE}"
 echo ""
 
 # 执行 CASA 并运行 Python 脚本，同时输出到终端和日志文件
-stdbuf -oL ${CASA_CMD} --nologger --nogui --nologfile -c "${PYTHON_SCRIPT}" 2>&1 | tee "${LOG_FILE}"
+stdbuf -oL "${CASA_CMD}" --nologger --nogui --nologfile -c "${PYTHON_SCRIPT}" "$@" 2>&1 | tee "${LOG_FILE}"
 
 # 检查执行结果
 if [ ${PIPESTATUS[0]} -eq 0 ]; then

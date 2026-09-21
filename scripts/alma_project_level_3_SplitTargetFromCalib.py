@@ -168,14 +168,15 @@ def main():
                 continue
 
             print("Splitting target '{}' into {}...".format(target, output_vis))
-            
+            ## TO DO: check whether corrected data exist
             try:
                 # 运行 split
                 # field=target 告诉 split 只提取该目标源的数据
                 split(vis=ms_file, 
                       outputvis=output_vis, 
                       field=target, 
-                      datacolumn='data')
+                      datacolumn='data', 
+                      keepmms=False)
                 print("Split finished for {}.".format(target))
             except Exception as e:
                 print("Error running split for {}: {}".format(target, e))

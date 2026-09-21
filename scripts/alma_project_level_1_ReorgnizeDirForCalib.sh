@@ -17,7 +17,8 @@ echo "目标目录: ${TARGET_DIR}"
 echo ""
 
 # 查找所有 member 目录（只匹配顶层，不包括子目录）并按路径排序
-find "${BASE_DIR}" -type d -regex ".*/science[^/]*/group[^/]*/member\.uid[^/]*$" | sort | while read member_dir; do
+while read member_dir; do
+# find "${BASE_DIR}" -type d -regex ".*/science[^/]*/group[^/]*/member\.uid[^/]*$" | sort | while read member_dir; do
     # 生成新的目录名（格式：DataSet_01, DataSet_02, ...）
     new_name=$(printf "DataSet_%02d" ${counter})
     target_path="${TARGET_DIR}/${new_name}"
@@ -45,7 +46,8 @@ find "${BASE_DIR}" -type d -regex ".*/science[^/]*/group[^/]*/member\.uid[^/]*$"
     
     # 计数器加1
     counter=$((counter + 1))
-done
+# done
+done < <(find "${BASE_DIR}" -type d -regex ".*/science[^/]*/group[^/]*/member\.uid[^/]*$" | sort)
 
 echo "=========================================="
 echo "处理完成！共处理 $((counter - 1)) 个数据集"

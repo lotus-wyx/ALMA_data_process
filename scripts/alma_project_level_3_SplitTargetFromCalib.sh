@@ -29,10 +29,10 @@ fi
 
 # CASA 路径 - 根据您的系统配置修改
 # 方法1: 如果 casa 在 PATH 中
-CASA_CMD="casa"
+# CASA_CMD="casa"
 
 # 方法2: 如果需要指定完整路径，取消下面的注释并修改路径
-# CASA_CMD="/home/wyx/Software/CASA/Portable/casa-6.2.1-7-pipeline-2021.2.0.128/bin/casa"
+CASA_CMD="/home/wyx/Software/CASA/Portable/casa-6.6.1-17-pipeline-2024.1.0.8/bin/casa"
 
 echo "=================================================="
 echo "CASA Split Target Script"

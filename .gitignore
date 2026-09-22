@@ -1,4 +1,24 @@
-__pycache__/
+# --- CASA installs (download yourself; do NOT commit multi-GB builds) ---
+CASA/Portable/casa*/
+CASA/Portable/casapy*/
+CASA/*.deb
+CASA/**/*.deb
+
+# --- Other local software under ~/Software (not part of this repo) ---
+gildas*/
+gildas_new/
+.venv/
+.vscode/
+
+# --- Local data / scratch ---
+target_line_list_radec.csv
+tclean.last
+*.last
+
+# --- Python / OS ---
+**/__pycache__/
 *.pyc
 *.pyo
 .DS_Store
+*.swp
+*~

@@ -1,0 +1,79 @@
+#!/bin/bash
+
+usage() {
+    echo "Usage: $0 -p path -t target1,target2,... [-f input_file_pattern] [-l velwidth_low] [-h velwidth_high] [-s calc_snr_for_other_line] [-i line_info_file] [-z guess_z]"
+    exit 1
+}
+
+VEL_LOW=200
+VEL_HIGH=500
+REDSHIFT=0
+SNR_OTHER_LINE="false"
+INPUT_PATTERN="*.result.txt"
+
+# get the dir of this script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_DIR="$(dirname "$SCRIPT_DIR")/config"
+LINE_INFO="$CONFIG_DIR/line_candidates"
+
+while getopts "p:t:f:l:h:s:i:z:" opt; do
+    case $opt in
+        p) DATA_PATH="$OPTARG" ;;
+        t) TARGETS="$OPTARG" ;;
+        f) INPUT_PATTERN="$OPTARG" ;;
+        l) VEL_LOW="$OPTARG" ;;
+        h) VEL_HIGH="$OPTARG" ;;
+        s) SNR_OTHER_LINE="$OPTARG" ;;
+        i) LINE_INFO="$OPTARG" ;;
+        z) REDSHIFT="$OPTARG" ;;
+        *) usage ;;
+    esac
+done
+
+if [ -z "$DATA_PATH" ]; then
+    DATA_PATH="$PWD"
+fi
+
+if [ -z "$DATA_PATH" ] || [ -z "$TARGETS" ]; then
+    usage
+fi
+
+## convert the target list to an array
+IFS=',' read -ra TARGET_ARRAY <<< "$TARGETS"
+
+for target in "${TARGET_ARRAY[@]}"; do
+    echo "process $target"
+    ## find the spec files, and move them to the dir "src_name/uv_spec" (create the dir if not exist)
+    src_dir="$DATA_PATH/$target"
+    uv_spec_dir="$src_dir/uv_spec"
+    mkdir -p "$uv_spec_dir"
+    
+    echo "Searching for files matching pattern '$INPUT_PATTERN' in '$src_dir' (excluding '$uv_spec_dir')"
+    find "$src_dir" -maxdepth 3 -path "$uv_spec_dir" -prune -o -type f -name "$INPUT_PATTERN" -print0 | while IFS= read -r -d '' file; do
+        # base=$(basename "$file")
+        echo "find the file and move it: $file -> $uv_spec_dir/"
+        cp -f "$file" "$uv_spec_dir/"
+    done
+    
+    python3 "$SCRIPT_DIR/line_detection.py" \
+        --path "$DATA_PATH" \
+        --target "$target" \
+        --input-file "$INPUT_PATTERN" \
+        --vel-low "$VEL_LOW" \
+        --vel-high "$VEL_HIGH" \
+        --snr-other-lines "$SNR_OTHER_LINE" \
+        --line-info "$LINE_INFO" \
+        --redshift "$REDSHIFT"
+    
+    if [ $? -eq 0 ]; then
+        echo "done for $target"
+    else
+        echo "Errors happen in $target"
+    fi
+    echo "----------------------------------------"
+done
+
+echo "Done for all!"
+
+
+
